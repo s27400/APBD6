@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using WebApplication2.Models;
 using WebApplication2.Services;
 
 namespace WebApplication2.Controller;
@@ -15,11 +16,32 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetStudents()
+    public IActionResult GetStudents(string orderBy)
     {
-        var animals = _animalsService.GetAnimals();
+        var animals = _animalsService.GetAnimals(orderBy);
         return Ok(animals);
     }
     
-    public IActionResult
+
+    [HttpPost]
+    public IActionResult CreateAnimal(Animal animal)
+    {
+        int counter = _animalsService.CreateAnimal(animal);
+        return StatusCode(StatusCodes.Status201Created);
+    }
+
+    [HttpPut("{id:int}")]
+    public IActionResult UpdateAnimal(int id, Animal animal)
+    {
+        int counter = _animalsService.UpdateAnimal(animal);
+        return NoContent();
+    }
+
+    [HttpDelete("{id:int}")]
+    public IActionResult DeleteAnimal(int id)
+    {
+        int conuter = _animalsService.DeleteAnimal(id);
+        return NoContent();
+    }
+    
 }

@@ -5,9 +5,8 @@ namespace WebApplication2.Repositories;
 
 public interface IAnimalsRepository
 {
-    IEnumerable<Animal> GetAnimals();
+    IEnumerable<Animal> GetAnimals(string orderBy);
     int CreateAnimal(Animal animal);
-    Animal GetAnimal(int idAnimal);
     int UpdateAnimal(Animal animal);
     int DeleteAnimal(int idAnimal);
 

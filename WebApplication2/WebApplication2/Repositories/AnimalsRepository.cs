@@ -13,15 +13,25 @@ public class AnimalsRepository : IAnimalsRepository
         _configuration = configuration;
     }
 
-    public IEnumerable<Animal> GetAnimals()
+    public IEnumerable<Animal> GetAnimals(string orderBy)
     {
-        using var con = new SqlConnection(_configuration["ConnectionString:DefaultConnection"]);
+        using var con = new SqlConnection(_configuration.GetConnectionString("Default"));
         con.Open();
 
         using var cmd = new SqlCommand();
         cmd.Connection = con;
-        cmd.CommandText = "SELECT IdAnimal, Name, Description, Category, Area FROM Animal";
-
+        List<string> sortStyles = new List<string>();
+        sortStyles.Add("Name");
+        sortStyles.Add("Description");
+        sortStyles.Add("Area");
+        sortStyles.Add("Category");
+        if (!sortStyles.Contains(orderBy))
+        {
+            orderBy = "Name";
+        }
+        string req = "SELECT IdAnimal, Name, Description, Category, Area FROM Animal ORDER BY " + orderBy;
+        cmd.CommandText = req;
+        cmd.Parameters.AddWithValue("@orderBy", orderBy);
         var dr = cmd.ExecuteReader();
         List<Animal> animals = new List<Animal>();
         while (dr.Read())
@@ -34,6 +44,7 @@ public class AnimalsRepository : IAnimalsRepository
                 Category = dr["Category"].ToString(),
                 Area = dr["Area"].ToString(),
             };
+            animals.Add(animal);
         }
 
         return animals;
@@ -41,7 +52,7 @@ public class AnimalsRepository : IAnimalsRepository
 
     public int CreateAnimal(Animal animal)
     {
-        using var con = new SqlConnection(_configuration["ConnectionString:DefaultConnection"]);
+        using var con = new SqlConnection(_configuration.GetConnectionString("Default"));
         con.Open();
 
         using var cmd = new SqlCommand();
@@ -56,40 +67,15 @@ public class AnimalsRepository : IAnimalsRepository
         return counter;
     }
 
-    public Animal GetAnimal(int idAnimal)
-    {
-        using var con = new SqlConnection(_configuration["ConnectionString:DefaultConnection"]);
-        con.Open();
-
-        using var cmd = new SqlCommand();
-        cmd.Connection = con;
-        cmd.CommandText = "SELECT IdAnimal, Name, Description, Category, Area FROM Animal WHERE IdAnimal = @IdAnimal";
-        cmd.Parameters.AddWithValue("@IdAnimal", idAnimal);
-
-        var dr = cmd.ExecuteReader();
-
-        if (!dr.Read()) return null;
-
-        Animal animal = new Animal()
-        {
-            IdAnimal = (int)dr["IdAnimal"],
-            Name = dr["Name"].ToString(),
-            Description = dr["Description"].ToString(),
-            Category = dr["Category"].ToString(),
-            Area = dr["Area"].ToString(),
-        };
-
-        return animal;
-    }
-
+    
     public int UpdateAnimal(Animal animal)
     {
-        using var con = new SqlConnection(_configuration["ConnectionString:DefaultConnection"]);
+        using var con = new SqlConnection(_configuration.GetConnectionString("Default"));
         con.Open();
 
         using var cmd = new SqlCommand();
         cmd.Connection = con;
-        cmd.CommandText = "UPDATE Animal SET Name = @Name, Description = @Description, Category = @Category, Area=@Area WHERE IdAniaml = @IdAnimal";
+        cmd.CommandText = "UPDATE Animal SET Name = @Name, Description = @Description, Category = @Category, Area=@Area WHERE IdAnimal = @IdAnimal";
         cmd.Parameters.AddWithValue("@Name", animal.Name);
         cmd.Parameters.AddWithValue("@Description", animal.Description);
         cmd.Parameters.AddWithValue("@Category", animal.Category);
@@ -103,7 +89,7 @@ public class AnimalsRepository : IAnimalsRepository
 
     public int DeleteAnimal(int id)
     {
-        using var con = new SqlConnection(_configuration["ConnectionString:DefaultConnection"]);
+        using var con = new SqlConnection(_configuration.GetConnectionString("Default"));
         con.Open();
 
         using var cmd = new SqlCommand();
