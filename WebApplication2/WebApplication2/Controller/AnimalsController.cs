@@ -31,10 +31,10 @@ public class AnimalsController : ControllerBase
     }
 
     [HttpPut("{id:int}")]
-    public IActionResult UpdateAnimal(Animal animal)
+    public IActionResult UpdateAnimal(Animal animal, int id)
     {
         
-        int counter = _animalsService.UpdateAnimal(animal);
+        int counter = _animalsService.UpdateAnimal(animal, id);
         return NoContent();
     }
 

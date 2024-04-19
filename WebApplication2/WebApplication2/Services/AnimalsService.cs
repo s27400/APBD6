@@ -23,9 +23,9 @@ public class AnimalsService : IAnimalsService
     }
 
     
-    public int UpdateAnimal(Animal animal)
+    public int UpdateAnimal(Animal animal, int id)
     {
-        return _animalsRepository.UpdateAnimal(animal);
+        return _animalsRepository.UpdateAnimal(animal, id);
     }
 
     public int DeleteAnimal(int idAnimal)

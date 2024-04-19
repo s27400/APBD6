@@ -68,7 +68,7 @@ public class AnimalsRepository : IAnimalsRepository
     }
 
     
-    public int UpdateAnimal(Animal animal)
+    public int UpdateAnimal(Animal animal, int id)
     {
         using var con = new SqlConnection(_configuration.GetConnectionString("Default"));
         con.Open();
@@ -80,7 +80,7 @@ public class AnimalsRepository : IAnimalsRepository
         cmd.Parameters.AddWithValue("@Description", animal.Description);
         cmd.Parameters.AddWithValue("@Category", animal.Category);
         cmd.Parameters.AddWithValue("@Area", animal.Area);
-        cmd.Parameters.AddWithValue("@IdAnimal", animal.IdAnimal);
+        cmd.Parameters.AddWithValue("@IdAnimal", id);
 
         var counter = cmd.ExecuteNonQuery();
         return counter;
